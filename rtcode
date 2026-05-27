@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORGE / Cross Functional Training</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Oswald:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#0a0a0a;
+      --bone:#f2efe7;
+      --acid:#d8ff3e;
+      --muted:#b9b7ae;
+      --line:#2d2d2d;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'DM Sans',sans-serif;
+      color:var(--bone);
+      background:#0a0a0a;
+    }
+    .display{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:-0.04em}
+    .fine-line{border-color:rgba(242,239,231,.16)}
+    .hero-title{line-height:.88}
+    .hero-title .stroke{
+      color:transparent;
+      -webkit-text-stroke:1.4px var(--bone);
+    }
+    .grain:before{
+      content:"";
+      position:absolute;inset:0;pointer-events:none;opacity:.08;
+      background-image:radial-gradient(rgba(255,255,255,.9) .55px, transparent .55px);
+      background-size:4px 4px;
+      mix-blend-mode:screen;
+    }
+    .reveal{animation:rise .8s ease both}
+    .reveal-2{animation:rise .8s .15s ease both}
+    .reveal-3{animation:rise .8s .3s ease both}
+    @keyframes rise{
+      from{opacity:0;transform:translateY(24px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    .card-image{transition:transform .7s ease}
+    .program-card:hover .card-image{transform:scale(1.07)}
+    .program-card:hover .program-arrow{transform:translateX(6px)}
+    .program-arrow{transition:transform .25s ease}
+    .nav-link{position:relative}
+    .nav-link:after{
+      content:"";position:absolute;left:0;bottom:-6px;width:0;height:1px;background:var(--acid);transition:width .25s ease;
+    }
+    .nav-link:hover:after{width:100%}
+    .btn-focus:focus-visible,.nav-link:focus-visible{
+      outline:2px solid var(--acid);outline-offset:4px;
+    }
+    .hero-photo:after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(to top, rgba(10,10,10,.65), transparent 45%, rgba(10,10,10,.05));
+    }
+    .slash-bg{
+      background:
+        linear-gradient(115deg, transparent 0 62%, rgba(216,255,62,.08) 62% 67%, transparent 67%),
+        #101010;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root">
+  <div class="w-full overflow-hidden">
+   <header data-template-id="site-header" class="canva-header w-full border-b fine-line bg-[#0a0a0a]/95">
+    <div class="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 py-5 flex items-center justify-between gap-6"><a href="#top" class="flex items-end gap-2 btn-focus"> <span data-template-id="brand-mark" class="canva-text display text-[30px] md:text-[34px] leading-none font-bold"></span> <span data-template-id="brand-submark" class="canva-text text-[10px] uppercase tracking-[0.28em] mb-1 hidden sm:block"></span> </a>
+     <nav class="hidden lg:flex items-center gap-9 text-[11px] uppercase tracking-[0.22em] text-[#c9c7bf]"><a href="#philosophy" data-template-id="nav-approach" class="canva-link nav-link"></a> <a href="#training" data-template-id="nav-training" class="canva-link nav-link"></a> <a href="#schedule" data-template-id="nav-schedule" class="canva-link nav-link"></a> <a href="#community" data-template-id="nav-community" class="canva-link nav-link"></a>
+     </nav><a href="#schedule" data-template-id="header-cta" class="canva-button btn-focus inline-flex items-center gap-2 px-4 md:px-5 py-3 text-[10px] uppercase tracking-[0.2em] font-bold"> </a>
+    </div>
+   </header>
+   <main id="top">
+    <section data-template-id="hero-section" class="canva-section relative min-h-[760px] lg:min-h-[820px] overflow-hidden">
+     <div class="absolute inset-0 hero-photo"><img data-template-id="hero-image" class="canva-image w-full h-full object-cover opacity-75" loading="lazy">
+     </div>
+     <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,10,10,.98)_0%,rgba(10,10,10,.86)_34%,rgba(10,10,10,.35)_62%,rgba(10,10,10,.15)_100%)]"></div>
+     <div class="grain absolute inset-0"></div>
+     <div class="relative z-10 max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 pt-24 md:pt-28 lg:pt-32">
+      <div class="max-w-[860px]">
+       <p data-template-id="hero-kicker" class="canva-text reveal text-[11px] uppercase tracking-[0.32em] text-[#d8ff3e] mb-6"></p>
+       <h1 data-template-id="hero-title" class="canva-text display hero-title reveal-2 text-[72px] sm:text-[92px] md:text-[132px] lg:text-[168px] font-bold max-w-[850px]">BUILT FOR<br><span class="stroke">MORE.</span></h1>
+       <p data-template-id="hero-copy" class="canva-text reveal-3 mt-7 max-w-[520px] text-[16px] md:text-[18px] leading-7 text-[#d6d2c9]"></p>
+       <div class="reveal-3 flex flex-wrap items-center gap-4 mt-9"><a href="#schedule" data-template-id="hero-primary-cta" class="canva-button btn-focus inline-flex items-center gap-3 px-6 py-4 text-[11px] uppercase tracking-[0.2em] font-bold"></a> <a href="#training" data-template-id="hero-secondary-cta" class="canva-link btn-focus inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-bold text-[#f2efe7]"> <span data-template-id="hero-secondary-cta-text" class="canva-text"></span> <i data-lucide="arrow-up-right" class="w-4 h-4"></i> </a>
+       </div>
+      </div>
+     </div>
+     <div class="absolute bottom-0 left-0 right-0 z-10 border-t fine-line bg-[#0a0a0a]/80 backdrop-blur-sm">
+      <div class="max-w-[1440px] mx-auto px-5 md:px-8 lg:px-12 grid grid-cols-2 md:grid-cols-4">
+       <div class="py-5 md:py-6 border-r fine-line">
+        <p data-template-id="hero-stat-1-number" class="canva-text display text-[30px] md:text-[42px] font-semibold leading-none"></p>
+        <p data-template-id="hero-stat-1-label" class="canva-text mt-2 text-[9px] uppercase tracking-[0.22em] text-[#a7a49c]"></p>
+       </div>
+       <div class="py-5 md:py-6 pl-4 md:pl-6 md:border-r fine-line">
+        <p data-template-id="hero-stat-2-number" class="canva-text display text-[30px] md:text-[42px] font-semibold leading-none"></p>
+        <p data-template-id="hero-stat-2-label" class="canva-text mt-2 text-[9px] uppercase tracking-[0.22em] text-[#a7a49c]"></p>
+       </div>
+       <div class="py-5 md:py-6 border-t md:border-t-0 border-r fine-line md:pl-6">
+        <p data-template-id="hero-stat-3-number" class="canva-text display text-[30px] md:text-[42px] font-semibold leading-none"></p>
+        <p data-template-id="hero-stat-3-label" class="canva-text mt-2 text-[9px] uppercase tracking-[0.22em] text-[#a7a49c]"></p>
+       </div>
+       <div class="py-5 md:py-6 pl-4 md:pl-6 border-t md:border-t-0 fine-line">
+        <p data-template-id="hero-stat-4-number" class="canva-text display text-[30px] md:text-[42px] font-semibold leading-none"></p>
+        <p data-template-id="hero-stat-4-label" class="canva-text mt-2 text-[9px] uppercase tracking-[0.22em] text-[#a7a49c]"></p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="philosophy" class="px-5 md:px-8 lg:px-12 py-24 md:py-32 bg-[#f2efe7] text-[#0a0a0a]">
+     <div class="max-w-[1440px] mx-auto grid lg:grid-cols-[.8fr_1.2fr] gap-10 lg:gap-20 items-start">
+      <div>
+       <p data-template-id="philosophy-kicker" class="canva-text text-[10px] uppercase tracking-[0.26em] text-[#6a685f]"></p>
+      </div>
+      <div>
+       <h2 data-template-id="philosophy-title" class="canva-text display text-[46px] sm:text-[64px] md:text-[84px] font-semibold leading-[.95] max-w-[1000px]"></h2>
+       <div class="grid md:grid-cols-[1fr_.8fr] gap-8 mt-10 border-t border-[#1a1a1a] pt-8">
+        <p data-template-id="philosophy-copy" class="canva-text text-[16px] md:text-[18px] leading-7 text-[#4c4a45] max-w-[590px]"></p>
+        <div class="grid grid-cols-2 gap-6">
+         <div>
+          <p data-template-id="philosophy-stat-1-number" class="canva-text display text-[46px] font-semibold leading-none"></p>
+          <p data-template-id="philosophy-stat-1-label" class="canva-text text-[10px] uppercase tracking-[0.2em] text-[#67645d] mt-2"></p>
+         </div>
+         <div>
+          <p data-template-id="philosophy-stat-2-number" class="canva-text display text-[46px] font-semibold leading-none"></p>
+          <p data-template-id="philosophy-stat-2-label" class="canva-text text-[10px] uppercase tracking-[0.2em] text-[#67645d] mt-2"></p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="training" class="px-5 md:px-8 lg:px-12 py-24 md:py-32 bg-[#0a0a0a]">
+     <div class="max-w-[1440px] mx-auto">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+       <div>
+        <p data-template-id="training-kicker" class="canva-text text-[10px] uppercase tracking-[0.28em] text-[#d8ff3e] mb-5"></p>
+        <h2 data-template-id="training-title" class="canva-text display text-[52px] sm:text-[72px] md:text-[96px] leading-[.9] font-semibold max-w-[760px]"></h2>
+       </div>
+       <p data-template-id="training-copy" class="canva-text max-w-[380px] text-[15px] leading-7 text-[#b9b7ae]"></p>
+      </div>
+      <div class="grid lg:grid-cols-3 border-t border-l fine-line">
+       <article data-template-id="program-card-1" class="canva-card program-card border-r border-b fine-line group">
+        <div class="h-[350px] md:h-[430px] overflow-hidden"><img data-template-id="program-image-1" class="canva-image card-image w-full h-full object-cover grayscale-[15%]" loading="lazy">
+        </div>
+        <div class="p-6 md:p-8">
+         <div class="flex justify-between items-center mb-8">
+          <p data-template-id="program-label-1" class="canva-text text-[10px] uppercase tracking-[0.24em] text-[#d8ff3e]"></p><span data-template-id="program-index-1" class="canva-text display text-[30px] text-[#54514b]"></span>
+         </div>
+         <h3 data-template-id="program-title-1" class="canva-text display text-[44px] font-semibold leading-none"></h3>
+         <p data-template-id="program-copy-1" class="canva-text mt-4 text-[14px] leading-6 text-[#b9b7ae]"></p><a href="#schedule" class="inline-flex items-center gap-2 mt-7 btn-focus"> <span data-template-id="program-link-1" class="canva-link text-[10px] uppercase tracking-[0.2em] text-[#f2efe7]"></span> <i data-lucide="arrow-right" class="program-arrow w-4 h-4 text-[#d8ff3e]"></i> </a>
+        </div>
+       </article>
+       <article data-template-id="program-card-2" class="canva-card program-card border-r border-b fine-line group">
+        <div class="h-[350px] md:h-[430px] overflow-hidden"><img data-template-id="program-image-2" class="canva-image card-image w-full h-full object-cover grayscale-[15%]" loading="lazy">
+        </div>
+        <div class="p-6 md:p-8">
+         <div class="flex justify-between items-center mb-8">
+          <p data-template-id="program-label-2" class="canva-text text-[10px] uppercase tracking-[0.24em] text-[#d8ff3e]"></p><span data-template-id="program-index-2" class="canva-text display text-[30px] text-[#54514b]"></span>
+         </div>
+         <h3 data-template-id="program-title-2" class="canva-text display text-[44px] font-semibold leading-none"></h3>
+         <p data-template-id="program-copy-2" class="canva-text mt-4 text-[14px] leading-6 text-[#b9b7ae]"></p><a href="#schedule" class="inline-flex items-center gap-2 mt-7 btn-focus"> <span data-template-id="program-link-2" class="canva-link text-[10px] uppercase tracking-[0.2em] text-[#f2efe7]"></span> <i data-lucide="arrow-right" class="program-arrow w-4 h-4 text-[#d8ff3e]"></i> </a>
+        </div>
+       </article>
+       <article data-template-id="program-card-3" class="canva-card program-card border-r border-b fine-line group">
+        <div class="h-[350px] md:h-[430px] overflow-hidden"><img data-template-id="program-image-3" class="canva-image card-image w-full h-full object-cover grayscale-[15%]" loading="lazy">
+        </div>
+        <div class="p-6 md:p-8">
+         <div class="flex justify-between items-center mb-8">
+          <p data-template-id="program-label-3" class="canva-text text-[10px] uppercase tracking-[0.24em] text-[#d8ff3e]"></p><span data-template-id="program-index-3" class="canva-text display text-[30px] text-[#54514b]"></span>
+         </div>
+         <h3 data-template-id="program-title-3" class="canva-text display text-[44px] font-semibold leading-none"></h3>
+         <p data-template-id="program-copy-3" class="canva-text mt-4 text-[14px] leading-6 text-[#b9b7ae]"></p><a href="#schedule" class="inline-flex items-center gap-2 mt-7 btn-focus"> <span data-template-id="program-link-3" class="canva-link text-[10px] uppercase tracking-[0.2em] text-[#f2efe7]"></span> <i data-lucide="arrow-right" class="program-arrow w-4 h-4 text-[#d8ff3e]"></i> </a>
+        </div>
+       </article>
+      </div>
+     </div>
+    </section>
+    <section id="schedule" data-template-id="schedule-section" class="canva-section slash-bg px-5 md:px-8 lg:px-12 py-20 md:py-24 border-y fine-line">
+     <div class="max-w-[1440px] mx-auto">
+      <div class="flex flex-col lg:flex-row justify-between gap-8 mb-12">
+       <div>
+        <p data-template-id="schedule-kicker" class="canva-text text-[10px] uppercase tracking-[0.28em] text-[#d8ff3e] mb-4"></p>
+        <h2 data-template-id="schedule-title" class="canva-text display text-[50px] md:text-[74px] font-semibold leading-none"></h2>
+       </div><a href="#top" data-template-id="schedule-cta" class="canva-button btn-focus self-start inline-flex items-center gap-3 px-6 py-4 text-[10px] uppercase tracking-[0.2em] font-bold"></a>
+      </div>
+      <div class="grid md:grid-cols-4 border-t border-l fine-line">
+       <div class="p-6 md:p-7 border-r border-b fine-line">
+        <p data-template-id="schedule-day-1" class="canva-text text-[10px] uppercase tracking-[0.22em] text-[#8f8c84]"></p>
+        <p data-template-id="schedule-time-1" class="canva-text display text-[44px] mt-6 leading-none"></p>
+        <p data-template-id="schedule-class-1" class="canva-text mt-5 text-[12px] uppercase tracking-[0.16em] text-[#d8ff3e]"></p>
+       </div>
+       <div class="p-6 md:p-7 border-r border-b fine-line">
+        <p data-template-id="schedule-day-2" class="canva-text text-[10px] uppercase tracking-[0.22em] text-[#8f8c84]"></p>
+        <p data-template-id="schedule-time-2" class="canva-text display text-[44px] mt-6 leading-none"></p>
+        <p data-template-id="schedule-class-2" class="canva-text mt-5 text-[12px] uppercase tracking-[0.16em] text-[#d8ff3e]"></p>
+       </div>
+       <div class="p-6 md:p-7 border-r border-b fine-line">
+        <p data-template-id="schedule-day-3" class="canva-text text-[10px] uppercase tracking-[0.22em] text-[#8f8c84]"></p>
+        <p data-template-id="schedule-time-3" class="canva-text display text-[44px] mt-6 leading-none"></p>
+        <p data-template-id="schedule-class-3" class="canva-text mt-5 text-[12px] uppercase tracking-[0.16em] text-[#d8ff3e]"></p>
+       </div>
+       <div class="p-6 md:p-7 border-r border-b fine-line">
+        <p data-template-id="schedule-day-4" class="canva-text text-[10px] uppercase tracking-[0.22em] text-[#8f8c84]"></p>
+        <p data-template-id="schedule-time-4" class="canva-text display text-[44px] mt-6 leading-none"></p>
+        <p data-template-id="schedule-class-4" class="canva-text mt-5 text-[12px] uppercase tracking-[0.16em] text-[#d8ff3e]"></p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section id="community" class="bg-[#f2efe7] text-[#0a0a0a]">
+     <div class="grid lg:grid-cols-2">
+      <div class="min-h-[420px] lg:min-h-[680px]"><img data-template-id="community-image" class="canva-image w-full h-full object-cover" loading="lazy">
+      </div>
+      <div class="px-5 md:px-10 lg:px-16 py-16 md:py-20 flex items-center">
+       <div>
+        <p data-template-id="community-kicker" class="canva-text text-[10px] uppercase tracking-[0.28em] text-[#64615a] mb-6"></p>
+        <h2 data-template-id="community-title" class="canva-text display text-[52px] md:text-[80px] font-semibold leading-[.95]"></h2>
+        <p data-template-id="community-copy" class="canva-text mt-8 text-[16px] md:text-[18px] leading-7 text-[#514f49] max-w-[620px]"></p>
+        <div class="grid grid-cols-2 gap-8 mt-12 pt-8 border-t border-[#1a1a1a] max-w-[520px]">
+         <div>
+          <p data-template-id="community-stat-1-number" class="canva-text display text-[44px] leading-none"></p>
+          <p data-template-id="community-stat-1-label" class="canva-text mt-2 text-[10px] uppercase tracking-[0.2em] text-[#69665f]"></p>
+         </div>
+         <div>
+          <p data-template-id="community-stat-2-number" class="canva-text display text-[44px] leading-none"></p>
+          <p data-template-id="community-stat-2-label" class="canva-text mt-2 text-[10px] uppercase tracking-[0.2em] text-[#69665f]"></p>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+   <footer data-template-id="footer-section" class="canva-footer bg-[#0a0a0a] px-5 md:px-8 lg:px-12 py-10 border-t fine-line">
+    <div class="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between gap-8">
+     <div>
+      <p data-template-id="footer-brand" class="canva-text display text-[34px] font-bold leading-none"></p>
+      <p data-template-id="footer-copy" class="canva-text mt-3 text-[12px] uppercase tracking-[0.18em] text-[#8e8b84]"></p>
+     </div>
+     <div class="flex flex-wrap gap-6 md:gap-8 text-[10px] uppercase tracking-[0.2em] text-[#b9b7ae] items-center"><a href="#philosophy" data-template-id="footer-link-1" class="canva-link nav-link"></a> <a href="#training" data-template-id="footer-link-2" class="canva-link nav-link"></a> <a href="#schedule" data-template-id="footer-link-3" class="canva-link nav-link"></a> <a href="#community" data-template-id="footer-link-4" class="canva-link nav-link"></a>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      lucide.createIcons();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a02777398fc4b094',t:'MTc3OTkxMDU1Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
