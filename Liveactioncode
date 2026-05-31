@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Work Tracker</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#1f2c27;
+      --muted:#748078;
+      --line:#e1e6e1;
+      --soft:#f6f6f2;
+      --panel:#ffffff;
+      --accent:#315f4c;
+      --accent-soft:#edf3ef;
+      --danger:#a95b55;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'DM Sans',sans-serif;color:var(--ink)}
+    .app-shell{width:100%;min-height:calc(100 * min(var(--vh, 1vh), 1vh));}
+    .focus-ring:focus{outline:3px solid rgba(49,95,76,.2);outline-offset:2px}
+    .drawer-backdrop{background:rgba(20,28,24,.22)}
+    .drawer-panel{transform:translateX(100%);transition:transform .25s ease}
+    .drawer-open .drawer-panel{transform:translateX(0)}
+    .drawer-open{pointer-events:auto}
+    .spinner{
+      width:15px;height:15px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;
+      border-radius:999px;animation:spin .8s linear infinite
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media (max-width: 900px){
+      .dashboard-grid{grid-template-columns:1fr !important}
+      .side-panel{order:-1}
+    }
+  </style>
+ </head>
+ <body data-template-id="__page-root" style="background: rgb(246, 246, 242);">
+  <div class="app-shell w-full">
+   <header class="w-full border-b border-[#e4e8e3] bg-white">
+    <div class="max-w-7xl mx-auto px-5 md:px-8 py-5 flex items-center justify-between gap-4">
+     <div class="flex items-center gap-3">
+      <div data-template-id="brand-mark" class="canva-container w-9 h-9 rounded-lg flex items-center justify-center text-sm font700 font-semibold" style="background: rgb(49, 95, 76); color: rgb(255, 255, 255); font-weight: 700;">
+       W
+      </div>
+      <div>
+       <h1 data-template-id="page-title" class="canva-text leading-tight" style="color: rgb(31, 44, 39); font-weight: 700; font-style: normal; font-size: 26px;">Workfold</h1>
+       <p data-template-id="page-subtitle" class="canva-text mt-0.5" style="color: rgb(116, 128, 120); font-weight: 400; font-style: normal; font-size: 13px;">Employee work tracker</p>
+      </div>
+     </div><button id="openFormBtn" data-template-id="open-form-button" class="canva-button focus-ring hidden sm:inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90" type="button" style="background: rgb(49, 95, 76); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 15px;">Add task</button>
+    </div>
+   </header>
+   <main class="max-w-7xl mx-auto px-5 md:px-8 py-7 md:py-9">
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+     <article data-template-id="stat-card-total" class="canva-card border border-[#e2e7e2] bg-white p-4" style="background: rgb(255, 255, 255);">
+      <p data-template-id="stat-total-label" class="canva-text text-sm mb-2" style="color: rgb(116, 128, 120); font-weight: 500; font-style: normal; font-size: 15px;">Total assignments</p>
+      <div class="flex items-end justify-between">
+       <p id="totalTasks" class="text-3xl font-semibold text-[#1f2c27]">0</p><i data-lucide="clipboard-list" class="w-5 h-5 text-[#7d8d84]"></i>
+      </div>
+     </article>
+     <article data-template-id="stat-card-progress" class="canva-card border border-[#e2e7e2] bg-white p-4" style="background: rgb(255, 255, 255);">
+      <p data-template-id="stat-progress-label" class="canva-text text-sm mb-2" style="color: rgb(116, 128, 120); font-weight: 500; font-style: normal; font-size: 15px;">In progress</p>
+      <div class="flex items-end justify-between">
+       <p id="progressTasks" class="text-3xl font-semibold text-[#1f2c27]">0</p><i data-lucide="timer" class="w-5 h-5 text-[#7d8d84]"></i>
+      </div>
+     </article>
+     <article data-template-id="stat-card-due" class="canva-card border border-[#e2e7e2] bg-white p-4" style="background: rgb(255, 255, 255);">
+      <p data-template-id="stat-due-label" class="canva-text text-sm mb-2" style="color: rgb(116, 128, 120); font-weight: 500; font-style: normal; font-size: 15px;">Due this week</p>
+      <div class="flex items-end justify-between">
+       <p id="dueSoonTasks" class="text-3xl font-semibold text-[#1f2c27]">0</p><i data-lucide="calendar-days" class="w-5 h-5 text-[#7d8d84]"></i>
+      </div>
+     </article>
+    </section>
+    <section class="dashboard-grid grid grid-cols-[minmax(0,1fr)_300px] gap-6">
+     <div>
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
+       <div>
+        <p data-template-id="eyebrow" class="canva-text text-xs uppercase tracking-[.18em] mb-2" style="color: rgb(127, 140, 132); font-weight: 700; font-style: normal; font-size: 11px; letter-spacing: 0.16rem;">Team planning</p>
+        <h2 data-template-id="board-title" class="canva-text" style="color: rgb(31, 44, 39); font-weight: 700; font-style: normal; font-size: 24px;">Upcoming work</h2>
+       </div>
+       <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative"><label data-template-id="search-label" for="searchInput" class="canva-text sr-only" style="font-weight: 400; font-style: normal; font-size: 15px;">Search tasks</label> <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94a097]"></i> <input id="searchInput" data-template-id="search-input" class="canva-input focus-ring w-full sm:w-64 rounded-lg border border-[#dfe5df] bg-white px-10 py-2.5 text-sm text-[#1f2c27] placeholder:text-[#9aa49d]" type="text" placeholder="Search employee or task" style="color: rgb(31, 44, 39); font-weight: 400; font-style: normal; font-size: 15px;">
+        </div>
+        <div class="relative"><label data-template-id="filter-label" for="statusFilter" class="canva-text sr-only" style="font-weight: 400; font-style: normal; font-size: 15px;">Filter by status</label> <select id="statusFilter" class="focus-ring w-full sm:w-44 appearance-none rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 pr-9 text-sm text-[#415148]"> <option value="all">All statuses</option> <option value="Pending">Pending</option> <option value="In Progress">In Progress</option> <option value="Completed">Completed</option> </select> <i data-lucide="chevron-down" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#819088]"></i>
+        </div>
+       </div>
+      </div>
+      <div id="taskList" class="space-y-3"></div>
+      <div id="emptyState" data-template-id="empty-state-box" class="canva-panel hidden border border-dashed border-[#d8dfd8] p-10 text-center bg-white" style="background: rgb(255, 255, 255);">
+       <div class="mx-auto mb-4 w-11 h-11 rounded-lg bg-[#eef2ef] flex items-center justify-center text-[#74847a]"><i data-lucide="folder-open" class="w-5 h-5"></i>
+       </div>
+       <h3 data-template-id="empty-title" class="canva-text mb-2" style="color: rgb(31, 44, 39); font-weight: 700; font-style: normal; font-size: 18px;">Nothing on the board yet</h3>
+       <p data-template-id="empty-copy" class="canva-text max-w-md mx-auto" style="color: rgb(116, 128, 120); font-weight: 400; font-style: normal; font-size: 14px;">Add your first assignment to start building a clear view of your team's work.</p>
+      </div>
+     </div>
+     <aside data-template-id="side-panel" class="canva-panel side-panel border border-[#e2e7e2] p-5 bg-white" style="background: rgb(255, 255, 255);">
+      <div class="mb-5">
+       <p data-template-id="panel-kicker" class="canva-text text-xs uppercase tracking-[.18em] mb-2" style="color: rgb(127, 140, 132); font-weight: 700; font-style: normal; font-size: 11px; letter-spacing: 0.16rem;">Overview</p>
+       <h2 data-template-id="panel-title" class="canva-text" style="color: rgb(31, 44, 39); font-weight: 700; font-style: normal; font-size: 21px;">Department load</h2>
+      </div>
+      <p data-template-id="panel-copy" class="canva-text mb-5" style="color: rgb(116, 128, 120); font-weight: 400; font-style: normal; font-size: 14px;">A simple view of where current assignments are sitting across the team.</p>
+      <div id="departmentOverview" class="space-y-4"></div><button id="mobileOpenBtn" data-template-id="mobile-open-button" class="canva-button focus-ring mt-6 w-full sm:hidden inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold" type="button" style="background: rgb(49, 95, 76); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 15px;">Add task</button>
+     </aside>
+    </section>
+   </main>
+  </div>
+  <div id="drawer" class="fixed inset-0 z-40 pointer-events-none">
+   <div id="drawerBackdrop" class="drawer-backdrop absolute inset-0 opacity-0 transition-opacity duration-300"></div>
+   <aside class="drawer-panel absolute right-0 top-0 h-full w-full max-w-[500px] bg-white shadow-2xl overflow-y-auto">
+    <div class="p-6 border-b border-[#e5e9e5] flex items-start justify-between">
+     <div>
+      <p data-template-id="form-kicker" class="canva-text text-xs uppercase tracking-[.18em] mb-2" style="color: rgb(127, 140, 132); font-weight: 700; font-style: normal; font-size: 11px; letter-spacing: 0.16rem;">Assignment</p>
+      <h2 data-template-id="form-title" class="canva-text" style="color: rgb(31, 44, 39); font-weight: 700; font-style: normal; font-size: 22px;">Plan a task</h2>
+     </div><button id="closeFormBtn" class="focus-ring w-9 h-9 rounded-lg border border-[#dde4dd] flex items-center justify-center text-[#66746c]" type="button" aria-label="Close form"> <i data-lucide="x" class="w-4 h-4"></i> </button>
+    </div>
+    <form id="taskForm" class="p-6 space-y-5"><input type="hidden" id="editingId">
+     <div><label data-template-id="employee-label" for="employeeName" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Employee name</label> <input id="employeeName" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm" type="text" required="">
+     </div>
+     <div><label data-template-id="department-label" for="department" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Department</label> <input id="department" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm" type="text" required="">
+     </div>
+     <div><label data-template-id="task-label" for="taskTitle" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Task title</label> <input id="taskTitle" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm" type="text" required="">
+     </div>
+     <div><label data-template-id="description-label" for="taskDescription" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Task description</label> <textarea id="taskDescription" rows="4" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm resize-none"></textarea>
+     </div>
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div><label data-template-id="date-label" for="dueDate" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Due date</label> <input id="dueDate" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm" type="date" required="">
+      </div>
+      <div><label data-template-id="priority-label" for="priority" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Priority</label> <select id="priority" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm"> <option>Low</option> <option selected="">Medium</option> <option>High</option> </select>
+      </div>
+     </div>
+     <div><label data-template-id="status-label" for="status" class="canva-text block text-sm font-semibold mb-2" style="color: rgb(51, 68, 59); font-weight: 600; font-style: normal; font-size: 15px;">Status</label> <select id="status" class="focus-ring w-full rounded-lg border border-[#dfe5df] bg-white px-3 py-2.5 text-sm"> <option>Pending</option> <option>In Progress</option> <option>Completed</option> </select>
+     </div>
+     <p id="formMessage" class="min-h-[20px] text-sm text-[#a95b55]" aria-live="polite"></p>
+     <div class="flex gap-3 pt-2"><button id="saveBtn" data-template-id="save-task-button" class="canva-button focus-ring flex-1 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold" type="submit" style="background: rgb(49, 95, 76); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 15px;">Save task</button> <button id="cancelBtn" data-template-id="cancel-task-button" class="canva-button focus-ring rounded-lg px-4 py-2.5 text-sm font-semibold" type="button" style="background: rgb(238, 241, 238); color: rgb(82, 97, 89); font-weight: 600; font-style: normal; font-size: 15px;">Cancel</button>
+     </div>
+    </form>
+   </aside>
+  </div>
+  <template id="taskTemplate">
+   <article data-template-id="task-card" class="canva-card border border-[#e2e7e2] bg-white p-4" data-id="">
+    <div class="flex flex-col md:flex-row md:items-start gap-4">
+     <div class="flex items-start gap-3 flex-1">
+      <div class="avatar w-10 h-10 shrink-0 rounded-lg bg-[#edf3ef] text-[#416351] flex items-center justify-center text-sm font-semibold"></div>
+      <div class="min-w-0 flex-1">
+       <div class="flex flex-wrap items-center gap-2 mb-1">
+        <h3 class="employee-name text-base font-semibold text-[#1f2c27]"></h3><span class="department-pill rounded-md bg-[#f1f4f1] px-2 py-1 text-xs font-medium text-[#728078]"></span>
+       </div>
+       <p class="task-title text-sm font-medium text-[#405047] mb-1"></p>
+       <p class="task-description text-sm leading-6 text-[#7a8780]"></p>
+      </div>
+     </div>
+     <div class="md:text-right shrink-0">
+      <div class="flex md:justify-end gap-2 mb-3"><span class="priority-badge rounded-md px-2 py-1 text-xs font-semibold"></span> <span class="status-badge rounded-md px-2 py-1 text-xs font-semibold"></span>
+      </div>
+      <div class="flex items-center md:justify-end gap-1 text-xs text-[#85918a] mb-3"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> <span class="due-date"></span>
+      </div>
+      <div class="flex gap-2 md:justify-end"><button class="edit-btn focus-ring w-8 h-8 rounded-md border border-[#dde4dd] flex items-center justify-center text-[#66766d]" type="button" aria-label="Edit task"> <i data-lucide="pencil" class="w-3.5 h-3.5"></i> </button> <button class="delete-btn focus-ring w-8 h-8 rounded-md border border-[#eadfdd] flex items-center justify-center text-[#a76059]" type="button" aria-label="Delete task"> <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> </button>
+      </div>
+     </div>
+    </div>
+    <div class="confirm-row hidden mt-4 pt-4 border-t border-[#edf1ed] flex items-center justify-between gap-3">
+     <p data-template-id="delete-confirm-text" class="canva-text text-sm"></p>
+     <div class="flex gap-2"><button class="confirm-delete rounded-md bg-[#a95b55] text-white px-3 py-1.5 text-xs font-semibold" type="button">Delete</button> <button class="cancel-delete rounded-md bg-[#f0f2f0] text-[#58675f] px-3 py-1.5 text-xs font-semibold" type="button">Cancel</button>
+     </div>
+    </div>
+   </article>
+  </template>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    let records = [];
+    let filteredRecords = [];
+    let isSaving = false;
+
+    const taskList = document.getElementById('taskList');
+    const emptyState = document.getElementById('emptyState');
+    const departmentOverview = document.getElementById('departmentOverview');
+    const drawer = document.getElementById('drawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const taskForm = document.getElementById('taskForm');
+    const formMessage = document.getElementById('formMessage');
+    const saveBtn = document.getElementById('saveBtn');
+    const saveBtnText = saveBtn.querySelector('.button-text');
+    const saveSpinner = saveBtn.querySelector('.spinner');
+
+    const handler = {
+      onDataChanged(data) {
+        records = [...data].sort((a,b) => new Date(a.due_date) - new Date(b.due_date));
+        updateStats();
+        applyFilters();
+        renderDepartmentOverview();
+      }
+    };
+
+    async function initApp(){
+      const result = await window.dataSdk.init(handler);
+      if(!result.isOk){
+        formMessage.textContent = 'Unable to connect to your saved work right now.';
+      }
+      lucide.createIcons();
+    }
+
+    function openDrawer(record = null){
+      taskForm.reset();
+      formMessage.textContent = '';
+      document.getElementById('editingId').value = '';
+      if(record){
+        document.getElementById('editingId').value = record.__backendId;
+        document.getElementById('employeeName').value = record.employee_name || '';
+        document.getElementById('department').value = record.department || '';
+        document.getElementById('taskTitle').value = record.task_title || '';
+        document.getElementById('taskDescription').value = record.task_description || '';
+        document.getElementById('dueDate').value = record.due_date || '';
+        document.getElementById('priority').value = record.priority || 'Medium';
+        document.getElementById('status').value = record.status || 'Pending';
+      }
+      drawer.classList.add('drawer-open');
+      drawer.style.pointerEvents = 'auto';
+      drawerBackdrop.classList.remove('opacity-0');
+      setTimeout(() => document.getElementById('employeeName').focus(), 100);
+    }
+
+    function closeDrawer(){
+      drawer.classList.remove('drawer-open');
+      drawerBackdrop.classList.add('opacity-0');
+      setTimeout(() => { drawer.style.pointerEvents = 'none'; }, 250);
+    }
+
+    function updateStats(){
+      document.getElementById('totalTasks').textContent = records.length;
+      document.getElementById('progressTasks').textContent = records.filter(r => r.status === 'In Progress').length;
+      const today = new Date();
+      const end = new Date();
+      end.setDate(today.getDate() + 7);
+      const dueSoon = records.filter(r => {
+        if(!r.due_date || r.status === 'Completed') return false;
+        const d = new Date(r.due_date + 'T00:00:00');
+        return d >= new Date(today.toDateString()) && d <= end;
+      }).length;
+      document.getElementById('dueSoonTasks').textContent = dueSoon;
+    }
+
+    function applyFilters(){
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      filteredRecords = records.filter(r => {
+        const haystack = `${r.employee_name} ${r.department} ${r.task_title}`.toLowerCase();
+        return (!query || haystack.includes(query)) && (status === 'all' || r.status === status);
+      });
+      renderTasks(filteredRecords);
+    }
+
+    function renderTasks(items){
+      const existing = new Map([...taskList.children].map(el => [el.dataset.id, el]));
+      items.forEach(record => {
+        let card = existing.get(record.__backendId);
+        if(!card){
+          const node = document.getElementById('taskTemplate').content.cloneNode(true);
+          card = node.querySelector('article');
+          card.dataset.id = record.__backendId;
+          taskList.appendChild(node);
+          card = taskList.querySelector(`[data-id="${record.__backendId}"]`);
+          card.querySelector('.edit-btn').addEventListener('click', () => openDrawer(record));
+          card.querySelector('.delete-btn').addEventListener('click', () => showDeleteConfirm(record.__backendId));
+          card.querySelector('.cancel-delete').addEventListener('click', () => hideDeleteConfirm(card));
+          card.querySelector('.confirm-delete').addEventListener('click', () => deleteRecord(record.__backendId, card));
+          lucide.createIcons();
+        }
+        updateCard(card, record);
+        existing.delete(record.__backendId);
+      });
+      existing.forEach(el => el.remove());
+      emptyState.classList.toggle('hidden', items.length > 0);
+    }
+
+    function updateCard(card, record){
+      const initials = (record.employee_name || 'NA').split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+      card.querySelector('.avatar').textContent = initials;
+      card.querySelector('.employee-name').textContent = record.employee_name || 'Unnamed employee';
+      card.querySelector('.department-pill').textContent = record.department || 'General';
+      card.querySelector('.task-title').textContent = record.task_title || 'Untitled task';
+      card.querySelector('.task-description').textContent = record.task_description || 'No description added yet.';
+      card.querySelector('.due-date').textContent = formatDate(record.due_date);
+
+      const priority = card.querySelector('.priority-badge');
+      priority.textContent = record.priority || 'Medium';
+      priority.className = 'priority-badge rounded-md px-2 py-1 text-xs font-semibold ' + priorityClass(record.priority);
+
+      const status = card.querySelector('.status-badge');
+      status.textContent = record.status || 'Pending';
+      status.className = 'status-badge rounded-md px-2 py-1 text-xs font-semibold ' + statusClass(record.status);
+    }
+
+    function renderDepartmentOverview(){
+      const counts = {};
+      records.forEach(r => {
+        const key = r.department || 'General';
+        counts[key] = (counts[key] || 0) + 1;
+      });
+      const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+      departmentOverview.innerHTML = '';
+      if(entries.length === 0){
+        const p = document.createElement('p');
+        p.className = 'text-sm text-[#87928b]';
+        p.textContent = 'No departments yet';
+        departmentOverview.appendChild(p);
+        return;
+      }
+      const max = Math.max(...entries.map(e=>e[1]),1);
+      entries.forEach(([name,count])=>{
+        const row = document.createElement('div');
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-sm mb-2">
+            <span class="font-medium text-[#405047]">${escapeHtml(name)}</span>
+            <span class="text-[#7c8981]">${count}</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-[#eef1ee] overflow-hidden">
+            <div class="h-full rounded-full bg-[#5f846f]" style="width:${Math.max(10,(count/max)*100)}%"></div>
+          </div>`;
+        departmentOverview.appendChild(row);
+      });
+    }
+
+    function showDeleteConfirm(id){
+      document.querySelectorAll('.confirm-row').forEach(r => r.classList.add('hidden'));
+      const card = taskList.querySelector(`[data-id="${id}"]`);
+      if(card) card.querySelector('.confirm-row').classList.remove('hidden');
+    }
+
+    function hideDeleteConfirm(card){
+      card.querySelector('.confirm-row').classList.add('hidden');
+    }
+
+    async function deleteRecord(id, card){
+      const record = records.find(r => r.__backendId === id);
+      if(!record) return;
+      const btn = card.querySelector('.confirm-delete');
+      btn.disabled = true;
+      btn.textContent = 'Deleting…';
+      const result = await window.dataSdk.delete(record);
+      if(!result.isOk){
+        btn.disabled = false;
+        btn.textContent = 'Delete';
+        card.querySelector('.confirm-row').classList.add('hidden');
+        formMessage.textContent = 'Could not delete this task. Please try again.';
+      }
+    }
+
+    taskForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if(isSaving) return;
+
+      const employee_name = document.getElementById('employeeName').value.trim();
+      const department = document.getElementById('department').value.trim();
+      const task_title = document.getElementById('taskTitle').value.trim();
+      const task_description = document.getElementById('taskDescription').value.trim();
+      const due_date = document.getElementById('dueDate').value;
+      const priority = document.getElementById('priority').value;
+      const status = document.getElementById('status').value;
+      const editingId = document.getElementById('editingId').value;
+
+      if(!employee_name || !department || !task_title || !due_date){
+        formMessage.textContent = 'Please complete the required fields.';
+        return;
+      }
+
+      if(!editingId && records.length >= 999){
+        formMessage.textContent = 'You have reached the maximum of 999 saved tasks. Please delete a task before adding another.';
+        return;
+      }
+
+      isSaving = true;
+      saveBtn.disabled = true;
+      saveSpinner.classList.remove('hidden');
+      saveBtnText.textContent = editingId ? 'Updating…' : 'Saving…';
+      formMessage.textContent = '';
+
+      let result;
+      if(editingId){
+        const existing = records.find(r => r.__backendId === editingId);
+        result = await window.dataSdk.update({
+          ...existing,
+          employee_name,
+          department,
+          task_title,
+          task_description,
+          due_date,
+          priority,
+          status
+        });
+      } else {
+        result = await window.dataSdk.create({
+          employee_name,
+          department,
+          task_title,
+          task_description,
+          due_date,
+          priority,
+          status,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      isSaving = false;
+      saveBtn.disabled = false;
+      saveSpinner.classList.add('hidden');
+      saveBtnText.textContent = editingId ? 'Update task' : 'Save task';
+
+      if(result.isOk){
+        closeDrawer();
+      } else {
+        formMessage.textContent = 'We could not save this task. Please try again.';
+      }
+    });
+
+    function formatDate(value){
+      if(!value) return 'No due date';
+      const d = new Date(value + 'T00:00:00');
+      return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    }
+
+    function priorityClass(value){
+      if(value === 'High') return 'bg-[#f6e8e6] text-[#9c514c]';
+      if(value === 'Low') return 'bg-[#edf4ef] text-[#5f7a69]';
+      return 'bg-[#f5f1e8] text-[#927447]';
+    }
+
+    function statusClass(value){
+      if(value === 'Completed') return 'bg-[#eaf3ed] text-[#50735d]';
+      if(value === 'In Progress') return 'bg-[#edf1f5] text-[#5f7289]';
+      return 'bg-[#f1f2ed] text-[#777b5f]';
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    document.getElementById('openFormBtn').addEventListener('click', ()=>openDrawer());
+    document.getElementById('mobileOpenBtn').addEventListener('click', ()=>openDrawer());
+    document.getElementById('closeFormBtn').addEventListener('click', closeDrawer);
+    document.getElementById('cancelBtn').addEventListener('click', closeDrawer);
+    drawerBackdrop.addEventListener('click', closeDrawer);
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a048c5bafaaf4032',t:'MTc4MDI1OTgwMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
