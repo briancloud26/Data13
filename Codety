@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en"><head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Archive</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    .tab-pill { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .tab-pill.active { background: #d97706; color: #ffffff; border-color: #d97706; }
+    .entry-card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+  </style>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen" style="background: rgb(253, 248, 240);">
+  <header class="relative h-52 overflow-hidden"><img data-template-id="hero-image" class="canva-image absolute inset-0 w-full h-full object-cover" loading="lazy" src="https://images.pexels.com/photos/1907786/pexels-photo-1907786.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1280" alt="Warmly lit library with bookshelves and a reading lamp creating a cozy ambiance.">
+   <div class="absolute inset-0 bg-gradient-to-b from-amber-900/60 to-amber-50/95"></div>
+   <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+    <h1 data-template-id="page-title" class="canva-text font-display" style="color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 32px;">Digital Archive</h1>
+    <p data-template-id="page-subtitle" class="canva-text mt-2 text-sm" style="color: rgb(254, 243, 199); font-weight: 400; font-style: normal; font-size: 16px;">Recipes, memories &amp; bookmarks in one place</p>
+   </div>
+  </header>
+  <main class="max-w-5xl mx-auto px-4 py-8">
+   <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div id="filter-tabs" class="flex gap-2 flex-wrap"><button class="tab-pill active px-4 py-1.5 rounded-full text-sm font-medium transition" data-cat="all">All</button> <button class="tab-pill px-4 py-1.5 rounded-full text-sm font-medium transition" data-cat="recipes">Recipes</button> <button class="tab-pill px-4 py-1.5 rounded-full text-sm font-medium transition" data-cat="memories">Memories</button> <button class="tab-pill px-4 py-1.5 rounded-full text-sm font-medium transition" data-cat="bookmarks">Bookmarks</button>
+    </div><button id="add-btn" data-template-id="add-button" class="canva-button px-5 py-2 rounded-full font-medium flex items-center gap-2 transition hover:opacity-90" style="background: rgb(217, 119, 6); color: rgb(255, 255, 255); font-weight: 500; font-style: normal; font-size: 16px;">Add Entry</button>
+   </div>
+   <div id="add-form" class="hidden mb-8 p-6 rounded-2xl border border-amber-200 bg-white shadow-md">
+    <h2 data-template-id="form-heading" class="canva-text font-bold mb-4" style="color: rgb(41, 37, 36); font-weight: 700; font-style: normal; font-size: 24px;">New Entry</h2>
+    <form id="entry-form" class="grid sm:grid-cols-2 gap-4">
+     <div class="sm:col-span-2"><label for="f-title" class="text-sm font-medium text-stone-600">Title</label> <input id="f-title" type="text" required="" class="w-full mt-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-stone-800 focus:ring-2 focus:ring-amber-400 outline-none">
+     </div>
+     <div><label for="f-category" class="text-sm font-medium text-stone-600">Category</label> <select id="f-category" class="w-full mt-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-stone-800 focus:ring-2 focus:ring-amber-400 outline-none"> <option value="recipes">Recipe</option> <option value="memories">Memory</option> <option value="bookmarks">Bookmark</option> </select>
+     </div>
+     <div><label for="f-url" class="text-sm font-medium text-stone-600">URL (optional)</label> <input id="f-url" type="url" class="w-full mt-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-stone-800 focus:ring-2 focus:ring-amber-400 outline-none">
+     </div>
+     <div class="sm:col-span-2"><label for="f-content" class="text-sm font-medium text-stone-600">Notes</label> <textarea id="f-content" rows="3" class="w-full mt-1 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-stone-800 focus:ring-2 focus:ring-amber-400 outline-none"></textarea>
+     </div>
+     <div class="sm:col-span-2 flex gap-3"><button type="submit" data-template-id="save-button" class="canva-button px-5 py-2 rounded-lg font-medium" style="background: rgb(217, 119, 6); color: rgb(255, 255, 255); font-weight: 600; font-style: normal; font-size: 16px;">Save</button> <button type="button" id="cancel-btn" data-template-id="cancel-button" class="canva-button px-5 py-2 rounded-lg font-medium" style="background: rgb(231, 229, 228); color: rgb(68, 64, 60); font-weight: 400; font-style: normal; font-size: 16px;">Cancel</button>
+     </div>
+    </form>
+   </div>
+   <div id="entries-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+   <p id="empty-state" data-template-id="empty-state" class="canva-text text-center py-16 hidden" style="color: rgb(168, 162, 158); font-weight: 400; font-style: italic; font-size: 16px;">Your archive is empty — add your first entry above!</p>
+   <p id="limit-warning" class="hidden text-center text-red-600 font-medium py-4">Maximum 999 entries reached. Delete some to add more.</p>
+  </main>
+  <template id="entry-template">
+   <article data-template-id="entry-card" class="canva-card rounded-xl p-5 border border-amber-100 flex flex-col gap-2 transition entry-card-hover">
+    <div class="flex items-start justify-between gap-2">
+     <h3 data-template-id="entry-title" class="canva-text font-semibold text-base leading-snug"></h3><button class="delete-btn text-stone-400 hover:text-red-500 shrink-0" aria-label="Delete entry"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button>
+    </div><span data-template-id="entry-tag" class="canva-tag text-xs font-medium px-2 py-0.5 rounded-full self-start"></span>
+    <p data-template-id="entry-content" class="canva-text text-sm leading-relaxed line-clamp-3"></p><a data-template-id="entry-link" class="canva-link text-sm truncate" target="_blank" rel="noopener noreferrer"></a>
+    <div class="confirm-delete hidden mt-2 flex gap-2"><button class="confirm-yes text-xs px-3 py-1 bg-red-500 text-white rounded-lg">Delete</button> <button class="confirm-no text-xs px-3 py-1 bg-stone-200 text-stone-700 rounded-lg">Cancel</button>
+    </div>
+   </article>
+  </template>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script>
+    let allData = [];
+    let activeFilter = 'all';
+
+    const grid = document.getElementById('entries-grid');
+    const emptyState = document.getElementById('empty-state');
+    const limitWarning = document.getElementById('limit-warning');
+    const addForm = document.getElementById('add-form');
+    const form = document.getElementById('entry-form');
+
+    const catColors = {
+      recipes: { bg: '#dcfce7', color: '#166534' },
+      memories: { bg: '#ede9fe', color: '#5b21b6' },
+      bookmarks: { bg: '#fef3c7', color: '#92400e' }
+    };
+
+    document.querySelectorAll('.tab-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.tab-pill.active').classList.remove('active');
+        btn.classList.add('active');
+        activeFilter = btn.dataset.cat;
+        renderEntries();
+      });
+    });
+
+    document.getElementById('add-btn').addEventListener('click', () => addForm.classList.remove('hidden'));
+    document.getElementById('cancel-btn').addEventListener('click', () => addForm.classList.add('hidden'));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (allData.length >= 999) { limitWarning.classList.remove('hidden'); return; }
+      const btn = form.querySelector('[type=submit]');
+      btn.disabled = true; btn.textContent = 'Saving...';
+      const result = await window.dataSdk.create({
+        title: document.getElementById('f-title').value,
+        category: document.getElementById('f-category').value,
+        content: document.getElementById('f-content').value,
+        url: document.getElementById('f-url').value,
+        created_at: new Date().toISOString()
+      });
+      btn.disabled = false; btn.textContent = 'Save';
+      if (result.isOk) { form.reset(); addForm.classList.add('hidden'); }
+    });
+
+    function renderEntries() {
+      const filtered = activeFilter === 'all' ? allData : allData.filter(d => d.category === activeFilter);
+      const existingMap = new Map([...grid.children].map(el => [el.dataset.id, el]));
+      const newIds = new Set(filtered.map(d => d.__backendId));
+      existingMap.forEach((el, id) => { if (!newIds.has(id)) el.remove(); });
+      filtered.forEach(item => {
+        if (existingMap.has(item.__backendId)) {
+          updateCard(existingMap.get(item.__backendId), item);
+        } else {
+          grid.appendChild(createCard(item));
+        }
+      });
+      emptyState.classList.toggle('hidden', filtered.length > 0);
+      limitWarning.classList.toggle('hidden', allData.length < 999);
+    }
+
+    function createCard(item) {
+      const tpl = document.getElementById('entry-template');
+      const el = tpl.content.cloneNode(true).firstElementChild;
+      el.dataset.id = item.__backendId;
+      updateCard(el, item);
+      el.querySelector('.delete-btn').addEventListener('click', () => {
+        el.querySelector('.confirm-delete').classList.remove('hidden');
+      });
+      el.querySelector('.confirm-no').addEventListener('click', () => {
+        el.querySelector('.confirm-delete').classList.add('hidden');
+      });
+      el.querySelector('.confirm-yes').addEventListener('click', async () => {
+        el.style.opacity = '0.5'; el.style.pointerEvents = 'none';
+        await window.dataSdk.delete(item);
+      });
+      lucide.createIcons();
+      return el;
+    }
+
+    function updateCard(el, item) {
+      el.querySelector('[data-template-id="entry-title"]').textContent = item.title;
+      const tag = el.querySelector('[data-template-id="entry-tag"]');
+      tag.textContent = item.category;
+      const c = catColors[item.category] || catColors.bookmarks;
+      tag.style.background = c.bg; tag.style.color = c.color;
+      el.querySelector('[data-template-id="entry-content"]').textContent = item.content || '';
+      const link = el.querySelector('[data-template-id="entry-link"]');
+      if (item.url) { link.href = item.url; link.textContent = item.url; link.classList.remove('hidden'); }
+      else { link.classList.add('hidden'); }
+    }
+
+    const handler = {
+      onDataChanged(data) {
+        allData = data.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+        renderEntries();
+      }
+    };
+
+    window.dataSdk.init(handler);
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0dd2852d51f7094',t:'MTc4MTgxNTczNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
