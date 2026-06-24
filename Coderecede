@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260624-03-b2656cb"}');</script><script src="/_sdk/558340785a07a8b2.telemetry_sdk.js" integrity="sha512-w6huTWybcELc18WJb0w+HZlX471QfzMUh7gbslB6onKoaFEogFDmOPMV5FcEo5/Ws8CyGWJgk7MOklfxKnVegA=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Playground</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <style>
+        body { font-family: 'Space Mono', monospace; }
+        #code-editor {
+            tab-size: 4;
+            resize: none;
+            outline: none;
+            background: #1e1e2e;
+            color: #cdd6f4;
+            caret-color: #f5e0dc;
+        }
+        #output {
+            background: #11111b;
+            color: #a6e3a1;
+        }
+        .error-text { color: #f38ba8; }
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/458114e02319f6fb.data_sdk.js" type="text/javascript" integrity="sha512-MqxhlifLEIhxYPJAUg/WtiC5CY0R45RHAAwK31m2gePcEv6/zWdaNb/OHXNXZYtkB4TsvIOYMOacwywX7AXC3g=="></script>
+  <script src="/_sdk/c2d1d5313c51ffe1.resizing_sdk.js" type="text/javascript" integrity="sha512-qQAMemJMRFZxVvjytpvZJuJZ53CEj6hm6koWfforoCmGBxf4dwDWZGux307fbsvtDxdw8x4TQSA+OoNoE6FzlQ=="></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen flex flex-col" style="background: rgb(24, 24, 37);">
+  <header class="flex items-center justify-between px-5 py-3 border-b border-gray-700">
+   <h1 data-template-id="page-title" class="canva-text font-bold" style="color: rgb(205, 214, 244); font-weight: 700; font-style: normal; font-size: 18px;">Python Playground</h1><button data-template-id="run-button" class="canva-button px-4 py-2 rounded font-bold text-sm" onclick="runCode()" style="background: rgb(166, 227, 161); color: rgb(30, 30, 46); font-weight: 700; font-style: normal; font-size: 14px;">▶ Run</button>
+  </header>
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+   <div class="flex-1 flex flex-col min-h-0"><label data-template-id="editor-label" class="canva-text px-4 py-2 text-xs uppercase tracking-wider" style="color: rgb(108, 112, 134); font-weight: 400; font-style: normal; font-size: 14px;">Editor</label> <textarea id="code-editor" class="flex-1 w-full p-4 text-sm leading-relaxed" spellcheck="false">print("Hello, World!")
+
+for i in range(5):
+    print(f"Count: {i}")</textarea>
+   </div>
+   <div class="flex-1 flex flex-col min-h-0 border-t lg:border-t-0 lg:border-l border-gray-700"><label data-template-id="output-label" class="canva-text px-4 py-2 text-xs uppercase tracking-wider" style="color: rgb(108, 112, 134); font-weight: 400; font-style: normal; font-size: 14px;">Output</label>
+    <pre id="output" class="flex-1 p-4 text-sm overflow-auto whitespace-pre-wrap"></pre>
+   </div>
+  </main>
+  <script src="/_sdk/ba7a87cbf0298387.editing_sdk.js" integrity="sha512-Tj5coTlt0zVGjhUTG6We0NjzvddIVl9nrFVeLejaQFP8g9Kb83FahoAtAQLehYaTUxeN5sV/r4RJs7ytEpNoVQ=="></script>
+  <script>
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const output = document.getElementById('output');
+            output.textContent = '';
+            output.classList.remove('error-text');
+
+            Sk.configure({
+                output: function(text) {
+                    output.textContent += text;
+                },
+                read: function(x) {
+                    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+                        throw "File not found: '" + x + "'";
+                    return Sk.builtinFiles["files"][x];
+                }
+            });
+
+            Sk.misceval.asyncToPromise(function() {
+                return Sk.importMainWithBody("<stdin>", false, code, true);
+            }).catch(function(e) {
+                output.classList.add('error-text');
+                output.textContent = e.toString();
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a10e8d5db4d869fe',t:'MTc4MjMzMzY3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
