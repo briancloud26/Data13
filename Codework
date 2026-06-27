@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en"><head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Playground</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <style>
+    body { font-family: 'Space Mono', monospace; }
+    .theme-mocha { --bg: #1e1e2e; --fg: #cdd6f4; --caret: #f5e0dc; --output-bg: #11111b; --output-fg: #a6e3a1; --error: #f38ba8; --gutter: #45475a; --border: #313244; --header-bg: #181825; --kw: #cba6f7; --str: #a6e3a1; --num: #fab387; --comment: #6c7086; --builtin: #89b4fa; --fn: #89dceb; --op: #94e2d5; }
+    .theme-dracula { --bg: #282a36; --fg: #f8f8f2; --caret: #ff79c6; --output-bg: #1e1f29; --output-fg: #50fa7b; --error: #ff5555; --gutter: #6272a4; --border: #44475a; --header-bg: #21222c; --kw: #ff79c6; --str: #f1fa8c; --num: #bd93f9; --comment: #6272a4; --builtin: #8be9fd; --fn: #50fa7b; --op: #ff79c6; }
+    .theme-solarized { --bg: #002b36; --fg: #839496; --caret: #cb4b16; --output-bg: #001e26; --output-fg: #859900; --error: #dc322f; --gutter: #586e75; --border: #073642; --header-bg: #073642; --kw: #b58900; --str: #2aa198; --num: #d33682; --comment: #586e75; --builtin: #268bd2; --fn: #859900; --op: #cb4b16; }
+    .editor-container { position: relative; }
+    #code-editor { tab-size: 4; resize: none; outline: none; background: transparent; color: transparent; caret-color: var(--caret); position: relative; z-index: 2; }
+    #highlight-layer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1; overflow: auto; padding: 1rem; font-size: 0.875rem; line-height: 1.625; white-space: pre-wrap; word-wrap: break-word; color: var(--fg); }
+    #highlight-layer .kw { color: var(--kw); font-weight: bold; }
+    #highlight-layer .str { color: var(--str); }
+    #highlight-layer .num { color: var(--num); }
+    #highlight-layer .cmt { color: var(--comment); font-style: italic; }
+    #highlight-layer .bi { color: var(--builtin); }
+    #highlight-layer .fn { color: var(--fn); }
+    #highlight-layer .op { color: var(--op); }
+    #output { background: var(--output-bg); color: var(--output-fg); }
+    .error-text { color: var(--error) !important; }
+    .editor-wrap { background: var(--bg); }
+    .line-numbers { color: var(--gutter); background: var(--bg); user-select: none; text-align: right; padding: 1rem 0.5rem; font-size: 0.875rem; line-height: 1.625; overflow: hidden; }
+    .snippets-panel { background: var(--bg); border-color: var(--border); }
+    .snippet-item { border-color: var(--border); }
+    .snippet-item:hover { background: var(--border); }
+    #autocomplete { position: absolute; z-index: 10; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; max-height: 160px; overflow-y: auto; font-size: 0.75rem; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+    #autocomplete div { padding: 4px 8px; color: var(--fg); cursor: pointer; }
+    #autocomplete div.active, #autocomplete div:hover { background: var(--border); }
+    .builtin-badge { background: var(--gutter); color: var(--fg); font-size: 0.6rem; padding: 1px 4px; border-radius: 3px; }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen flex flex-col theme-mocha" style="background: rgb(24, 24, 37);">
+  <header class="flex items-center justify-between px-4 py-3 border-b" style="border-color: var(--border); background: var(--header-bg);">
+   <h1 data-template-id="page-title" class="canva-text font-bold" style="color: rgb(205, 214, 244); font-weight: 700; font-style: normal; font-size: 18px;">Python Playground</h1>
+   <div class="flex items-center gap-2"><select id="theme-select" class="px-2 py-1 rounded text-xs font-bold" style="background: var(--bg); color: var(--fg); border: 1px solid var(--border);" onchange="changeTheme(this.value)"> <option value="mocha">Mocha</option> <option value="dracula">Dracula</option> <option value="solarized">Solarized</option> </select> <button data-template-id="snippets-button" class="canva-button px-3 py-2 rounded text-xs font-bold" onclick="toggleSnippets()" style="background: rgb(69, 71, 90); color: rgb(205, 214, 244); font-weight: 700; font-style: normal; font-size: 14px;">Snippets</button> <button data-template-id="run-button" class="canva-button px-4 py-2 rounded font-bold text-sm" onclick="runCode()" style="background: rgb(166, 227, 161); color: rgb(30, 30, 46); font-weight: 700; font-style: normal; font-size: 14px;">▶ Run</button>
+   </div>
+  </header>
+  <div class="flex-1 flex overflow-hidden relative">
+   <aside id="snippets-panel" class="snippets-panel hidden w-64 flex-shrink-0 flex flex-col border-r overflow-hidden" style="border-color: var(--border);">
+    <div class="flex items-center justify-between px-3 py-2" style="border-bottom: 1px solid var(--border);"><span data-template-id="snippets-title" class="canva-text text-xs uppercase tracking-wider" style="color: rgb(108, 112, 134); font-weight: 400; font-style: normal; font-size: 14px;">Saved Snippets</span> <button class="px-2 py-1 rounded text-xs font-bold" style="background: var(--gutter); color: var(--fg);" onclick="saveSnippet()"><i data-lucide="save" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Save</button>
+    </div>
+    <div id="save-form" class="hidden px-3 py-2" style="border-bottom: 1px solid var(--border);">
+     <form onsubmit="confirmSave(event)" class="flex gap-1"><label for="snippet-name-input" class="sr-only">Snippet name</label> <input id="snippet-name-input" type="text" placeholder="Snippet name" class="flex-1 px-2 py-1 rounded text-xs" style="background: var(--output-bg); color: var(--fg); border: 1px solid var(--border);"> <button type="submit" class="px-2 py-1 rounded text-xs font-bold" style="background: var(--output-fg); color: var(--bg);">OK</button>
+     </form>
+    </div>
+    <div id="snippets-list" class="flex-1 overflow-auto p-2 space-y-1"></div>
+   </aside>
+   <main class="flex-1 flex flex-col lg:flex-row min-h-0 overflow-hidden">
+    <div class="flex-1 flex flex-col min-h-0"><label data-template-id="editor-label" class="canva-text px-4 py-2 text-xs uppercase tracking-wider" style="color: rgb(108, 112, 134); font-weight: 400; font-style: normal; font-size: 14px;">Editor</label>
+     <div class="flex-1 flex min-h-0 editor-wrap relative">
+      <div id="line-numbers" class="line-numbers flex-shrink-0"></div>
+      <div class="editor-container flex-1 relative min-h-0">
+       <div id="highlight-layer"></div><textarea id="code-editor" class="absolute inset-0 w-full h-full p-4 text-sm leading-relaxed" spellcheck="false" oninput="onEditorInput()" onscroll="syncScroll()" onkeydown="handleEditorKey(event)" onclick="hideAutocomplete()">print("Hello, World!")
+
+for i in range(5):
+    print(f"Count: {i}")</textarea>
+       <div id="autocomplete" class="hidden"></div>
+      </div>
+     </div>
+    </div>
+    <div class="flex-1 flex flex-col min-h-0 border-t lg:border-t-0 lg:border-l" style="border-color: var(--border);"><label data-template-id="output-label" class="canva-text px-4 py-2 text-xs uppercase tracking-wider" style="color: rgb(108, 112, 134); font-weight: 400; font-style: normal; font-size: 14px;">Output</label>
+     <pre id="output" class="flex-1 p-4 text-sm overflow-auto whitespace-pre-wrap"></pre>
+    </div>
+   </main>
+  </div>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    // Python keywords and builtins for highlighting and autocomplete
+    const KEYWORDS = ['False','None','True','and','as','assert','async','await','break','class','continue','def','del','elif','else','except','finally','for','from','global','if','import','in','is','lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield'];
+    const BUILTINS = ['print','range','len','int','str','float','list','dict','set','tuple','type','input','open','map','filter','zip','enumerate','sorted','reversed','abs','sum','min','max','round','isinstance','hasattr','getattr','setattr','super','property','staticmethod','classmethod'];
+    const ALL_WORDS = [...KEYWORDS, ...BUILTINS];
+
+    // Syntax highlighting
+    function highlight(code) {
+      // Escape HTML
+      let h = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      // Comments
+      h = h.replace(/(#[^\n]*)/g, '<span class="cmt">$1</span>');
+      // Strings (simple - triple and single/double quotes)
+      h = h.replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, '<span class="str">$1</span>');
+      // Numbers
+      h = h.replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>');
+      // Keywords
+      const kwRe = new RegExp('\\b(' + KEYWORDS.join('|') + ')\\b', 'g');
+      h = h.replace(kwRe, '<span class="kw">$1</span>');
+      // Builtins
+      const biRe = new RegExp('\\b(' + BUILTINS.join('|') + ')\\b', 'g');
+      h = h.replace(biRe, '<span class="bi">$1</span>');
+      // Function defs
+      h = h.replace(/\b(def\s+)(\w+)/g, '$1<span class="fn">$2</span>');
+      return h;
+    }
+
+    function updateHighlight() {
+      const code = document.getElementById('code-editor').value;
+      document.getElementById('highlight-layer').innerHTML = highlight(code) + '\n';
+    }
+
+    function updateLines() {
+      const editor = document.getElementById('code-editor');
+      const lines = editor.value.split('\n').length;
+      document.getElementById('line-numbers').innerHTML = Array.from({length: lines}, (_, i) => `<div>${i + 1}</div>`).join('');
+    }
+
+    function syncScroll() {
+      const ed = document.getElementById('code-editor');
+      document.getElementById('line-numbers').scrollTop = ed.scrollTop;
+      document.getElementById('highlight-layer').scrollTop = ed.scrollTop;
+      document.getElementById('highlight-layer').scrollLeft = ed.scrollLeft;
+    }
+
+    function onEditorInput() {
+      updateLines();
+      updateHighlight();
+      showAutocomplete();
+    }
+
+    updateLines();
+    updateHighlight();
+
+    // Autocomplete
+    let acIndex = 0;
+    let acItems = [];
+
+    function getCurrentWord() {
+      const ed = document.getElementById('code-editor');
+      const pos = ed.selectionStart;
+      const text = ed.value.substring(0, pos);
+      const match = text.match(/[a-zA-Z_]\w*$/);
+      return match ? match[0] : '';
+    }
+
+    function showAutocomplete() {
+      const word = getCurrentWord();
+      const ac = document.getElementById('autocomplete');
+      if (word.length < 2) { ac.classList.add('hidden'); acItems = []; return; }
+      acItems = ALL_WORDS.filter(w => w.startsWith(word) && w !== word).slice(0, 8);
+      if (acItems.length === 0) { ac.classList.add('hidden'); return; }
+      acIndex = 0;
+      ac.innerHTML = acItems.map((item, i) => `<div class="${i === 0 ? 'active' : ''}" onmousedown="insertCompletion('${item}')">${item}</div>`).join('');
+      // Position near caret
+      const ed = document.getElementById('code-editor');
+      const lines = ed.value.substring(0, ed.selectionStart).split('\n');
+      const lineNum = lines.length - 1;
+      const col = lines[lines.length - 1].length;
+      ac.style.top = ((lineNum + 1) * 22.75 + 16) + 'px';
+      ac.style.left = (col * 8.4 + 16) + 'px';
+      ac.classList.remove('hidden');
+    }
+
+    function hideAutocomplete() {
+      document.getElementById('autocomplete').classList.add('hidden');
+      acItems = [];
+    }
+
+    function insertCompletion(word) {
+      const ed = document.getElementById('code-editor');
+      const pos = ed.selectionStart;
+      const text = ed.value;
+      const before = text.substring(0, pos);
+      const currentWord = before.match(/[a-zA-Z_]\w*$/)[0];
+      const insert = word.substring(currentWord.length);
+      ed.value = text.substring(0, pos) + insert + text.substring(pos);
+      ed.selectionStart = ed.selectionEnd = pos + insert.length;
+      ed.focus();
+      hideAutocomplete();
+      onEditorInput();
+    }
+
+    function handleEditorKey(e) {
+      if (e.key === 'Tab') {
+        if (acItems.length > 0) { e.preventDefault(); insertCompletion(acItems[acIndex]); return; }
+        e.preventDefault();
+        const s = e.target.selectionStart, end = e.target.selectionEnd;
+        e.target.value = e.target.value.substring(0, s) + '    ' + e.target.value.substring(end);
+        e.target.selectionStart = e.target.selectionEnd = s + 4;
+        onEditorInput();
+      } else if (e.key === 'ArrowDown' && acItems.length > 0) {
+        e.preventDefault();
+        acIndex = Math.min(acIndex + 1, acItems.length - 1);
+        renderAcActive();
+      } else if (e.key === 'ArrowUp' && acItems.length > 0) {
+        e.preventDefault();
+        acIndex = Math.max(acIndex - 1, 0);
+        renderAcActive();
+      } else if (e.key === 'Enter' && acItems.length > 0) {
+        e.preventDefault();
+        insertCompletion(acItems[acIndex]);
+      } else if (e.key === 'Escape') {
+        hideAutocomplete();
+      }
+    }
+
+    function renderAcActive() {
+      const ac = document.getElementById('autocomplete');
+      [...ac.children].forEach((el, i) => el.classList.toggle('active', i === acIndex));
+    }
+
+    // Theme
+    function changeTheme(t) {
+      document.body.className = document.body.className.replace(/theme-\w+/, `theme-${t}`);
+      localStorage.setItem('py-theme', t);
+    }
+    const saved = localStorage.getItem('py-theme');
+    if (saved) { changeTheme(saved); document.getElementById('theme-select').value = saved; }
+
+    // Built-in snippets
+    const BUILTIN_SNIPPETS = {
+      'Hello World': 'print("Hello, World!")',
+      'For Loop': 'for i in range(10):\n    print(i)',
+      'Function': 'def greet(name):\n    return f"Hello, {name}!"\n\nprint(greet("World"))',
+      'Class': 'class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f"{self.name} makes a sound"\n\ndog = Animal("Dog")\nprint(dog.speak())',
+      'List Comprehension': 'squares = [x**2 for x in range(10)]\nprint(squares)',
+      'Try/Except': 'try:\n    result = 10 / 0\nexcept ZeroDivisionError as e:\n    print(f"Error: {e}")\nfinally:\n    print("Done")',
+      'Dictionary': 'person = {\n    "name": "Alice",\n    "age": 30,\n    "city": "NYC"\n}\n\nfor key, val in person.items():\n    print(f"{key}: {val}")',
+      'Fibonacci': 'def fibonacci(n):\n    a, b = 0, 1\n    for _ in range(n):\n        print(a, end=" ")\n        a, b = b, a + b\n\nfibonacci(10)',
+    };
+
+    // Snippets panel
+    function toggleSnippets() { document.getElementById('snippets-panel').classList.toggle('hidden'); }
+    function saveSnippet() { document.getElementById('save-form').classList.remove('hidden'); document.getElementById('snippet-name-input').focus(); }
+    function confirmSave(e) {
+      e.preventDefault();
+      const name = document.getElementById('snippet-name-input').value.trim();
+      if (!name) return;
+      const snippets = JSON.parse(localStorage.getItem('py-snippets') || '{}');
+      snippets[name] = document.getElementById('code-editor').value;
+      localStorage.setItem('py-snippets', JSON.stringify(snippets));
+      document.getElementById('snippet-name-input').value = '';
+      document.getElementById('save-form').classList.add('hidden');
+      renderSnippets();
+    }
+    function loadSnippet(code) {
+      document.getElementById('code-editor').value = code;
+      onEditorInput();
+    }
+    function deleteSnippet(name) {
+      const snippets = JSON.parse(localStorage.getItem('py-snippets') || '{}');
+      delete snippets[name];
+      localStorage.setItem('py-snippets', JSON.stringify(snippets));
+      renderSnippets();
+    }
+    function renderSnippets() {
+      const snippets = JSON.parse(localStorage.getItem('py-snippets') || '{}');
+      const list = document.getElementById('snippets-list');
+      let html = '';
+      // Built-in
+      html += '<p style="color:var(--gutter);font-size:0.65rem;padding:4px 4px 2px;text-transform:uppercase;">Built-in</p>';
+      for (const [name, code] of Object.entries(BUILTIN_SNIPPETS)) {
+        html += `<div class="snippet-item flex items-center justify-between px-2 py-1 rounded cursor-pointer" onclick="loadSnippet(BUILTIN_SNIPPETS['${name}'])"><span style="color:var(--fg);font-size:0.75rem;" class="truncate">${name}</span><span class="builtin-badge">built-in</span></div>`;
+      }
+      // User saved
+      const userKeys = Object.keys(snippets);
+      if (userKeys.length > 0) {
+        html += '<p style="color:var(--gutter);font-size:0.65rem;padding:8px 4px 2px;text-transform:uppercase;">My Snippets</p>';
+        for (const name of userKeys) {
+          const safeName = name.replace(/'/g, "\\'");
+          html += `<div class="snippet-item flex items-center justify-between px-2 py-1 rounded cursor-pointer" onclick="loadSnippet(JSON.parse(localStorage.getItem('py-snippets')||'{}')['${safeName}'])"><span style="color:var(--fg);font-size:0.75rem;" class="truncate">${name}</span><button onclick="event.stopPropagation();deleteSnippet('${safeName}')" style="color:var(--error);" class="ml-1 flex-shrink-0"><i data-lucide="trash-2" style="width:12px;height:12px;"></i></button></div>`;
+        }
+      }
+      list.innerHTML = html;
+      lucide.createIcons();
+    }
+    renderSnippets();
+
+    // Run
+    function runCode() {
+      const code = document.getElementById('code-editor').value;
+      const output = document.getElementById('output');
+      output.textContent = '';
+      output.classList.remove('error-text');
+      Sk.configure({
+        output: function(text) { output.textContent += text; },
+        read: function(x) {
+          if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined) throw "File not found: '" + x + "'";
+          return Sk.builtinFiles["files"][x];
+        }
+      });
+      Sk.misceval.asyncToPromise(function() {
+        return Sk.importMainWithBody("<stdin>", false, code, true);
+      }).catch(function(e) {
+        output.classList.add('error-text');
+        output.textContent = e.toString();
+      });
+    }
+
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a1219040966a31a6',t:'MTc4MjUzMzAyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
