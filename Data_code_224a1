@@ -1,0 +1,72 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { base44 } from "@/api/base44Client";
+import CustomerForm from "@/components/CustomerForm";
+import CustomerList from "@/components/CustomerList";
+import { Sparkles, History } from "lucide-react";
+
+export default function Home() {
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await base44.entities.CustomerInput.list("-created_date", 50);
+      setEntries(data);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const handleSave = async (normalized) => {
+    setSaving(true);
+    try {
+      await base44.entities.CustomerInput.create(normalized);
+      await load();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
+      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight">Input Refiner</h1>
+            <p className="text-xs text-muted-foreground">Clean & save customer input</p>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-6 py-10 grid gap-8 md:grid-cols-2">
+        <section className="rounded-2xl border bg-card p-6 shadow-sm">
+          <h2 className="text-base font-semibold mb-1">Customer details</h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            Enter raw input — it's normalized live, then saved.
+          </p>
+          <CustomerForm onSave={handleSave} saving={saving} />
+        </section>
+
+        <section className="rounded-2xl border bg-card p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-5">
+            <History className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-base font-semibold">Saved entries</h2>
+            <span className="ml-auto text-xs text-muted-foreground">
+              {entries.length} total
+            </span>
+          </div>
+          <CustomerList entries={entries} loading={loading} />
+        </section>
+      </main>
+    </div>
+  );
+}
